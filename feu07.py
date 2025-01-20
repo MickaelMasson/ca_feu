@@ -2,8 +2,8 @@
 
 import random
 
-height = 20
-width = 100
+height = 12
+width = 55
 wall = "█"  # chars[0]
 empty = " "  # chars[1]
 way = "+"  # chars[2]
@@ -77,6 +77,7 @@ def labyrinth_generator():
                 labyrinth_str += empty
             else:
                 labyrinth_str += wall
-        labyrinth_str += "\n"
+        if y != height - 1:
+            labyrinth_str += "\n"
 
     return labyrinth_str
