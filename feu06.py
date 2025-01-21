@@ -18,7 +18,8 @@ def read_file(file_path: pathlib.Path) -> str:
     return file_content
 
 
-def get_reading_parameters(file_content):
+def get_reading_parameters(file_content: str) -> tuple[int, int, str, str, str, str, str]:
+
     first_line = file_content.split("\n")[0]
 
     height = first_line[0]
@@ -46,38 +47,52 @@ def get_reading_parameters(file_content):
     goal_character = first_line[-1]
     height = int(height)
     width = int(width)
+
     return height, width, wall_character, path_character, solution_character, start_character, goal_character
 
 
-def heuristic(start, goal):
+def heuristic(start: tuple[int, int], goal: tuple[int, int]) -> int:
+
     return abs(start[0] - goal[0]) + abs(start[1] - goal[1])
 
 
-def get_neighbours(position, labyrinth, wall_character):
-    neighbours = []
+def get_neighbors(position: tuple[int, int], labyrinth: list[list[str]],
+                  wall_character: str) -> list[tuple[int, int]]:
+
+    neighbors = []
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
     for direction in directions:
         neighbor = (position[0] + direction[0], position[1] + direction[1])
         if (0 <= neighbor[0] < len(labyrinth) and
             0 <= neighbor[1] < len(labyrinth[0]) and
                 labyrinth[neighbor[0]][neighbor[1]] != wall_character):
-            neighbours.append(neighbor)
-    return neighbours
+            neighbors.append(neighbor)
+
+    return neighbors
 
 
-def reconstruct_path(cameFrom, current):
+def reconstruct_path(came_from: dict[tuple[int, int], tuple[int, int]],
+                     current: tuple[int, int]) -> list[tuple[int, int]]:
+
     total_path = [current]
 
-    while current in cameFrom:
-        current = cameFrom[current]
+    while current in came_from:
+        current = came_from[current]
         total_path.insert(0, current)
+
     return total_path
 
 
-def a_star(labyrinth, start, goal, wall_character):
+def a_star(labyrinth: list[list[str]], start: tuple[int, int], goal: tuple[int, int],
+           wall_character: str) -> str | None | list[tuple[int, int]]:
+
     open_set = [(0, start)]
     came_from = {}
+    # g_score est le coût pour atteindre un noeud depuis le départ.
     g_score = {start: 0}
+    # f_score est le coût total estimé pour atteindre l'arrivée
+    # en passant par un noeud (g_score + heuristic).
     f_score = {start: heuristic(start, goal)}
 
     while open_set:
@@ -88,14 +103,15 @@ def a_star(labyrinth, start, goal, wall_character):
         if current == goal:
             return reconstruct_path(came_from, current)
 
-        for neighbor in get_neighbours(current, labyrinth, wall_character):
-            tentative_g_score = g_score.get(current, float('inf')) + 1
+        neighbors = get_neighbors(current, labyrinth, wall_character)
 
-            if tentative_g_score < g_score.get(neighbor, float('inf')):
+        for neighbor in neighbors:
+            attempt_g_score = g_score.get(current) + 1  # type: ignore
+
+            if attempt_g_score < g_score.get(neighbor, float('inf')):
                 came_from[neighbor] = current
-                g_score[neighbor] = tentative_g_score  # type: ignore
-                f_score[neighbor] = tentative_g_score + \
-                    heuristic(neighbor, goal)
+                g_score[neighbor] = attempt_g_score
+                f_score[neighbor] = attempt_g_score + heuristic(neighbor, goal)
 
                 if neighbor not in [i[1] for i in open_set]:
                     open_set.append((f_score[neighbor], neighbor))
@@ -103,12 +119,15 @@ def a_star(labyrinth, start, goal, wall_character):
     return None
 
 
-def solve_labyrinth(labyrinth_input, height, width, wall_character, path_character, solution_character, start_character, goal_character):
+def solve_labyrinth(labyrinth_input: str, height: int, width: int, wall_character: str,
+                    path_character: str, solution_character: str, start_character: str,
+                    goal_character: str) -> str:
+
     labyrinth_rows = labyrinth_input.split("\n")[1:]
     labyrinth = [list(row) for row in labyrinth_rows]
-
-    start = None
-    goal = None
+    start = (0, 0)
+    goal = (0, 0)
+    color_solution_character = f'\033[32m{solution_character}\033[0m'
 
     for i in range(height):
         for j in range(width):
@@ -123,8 +142,8 @@ def solve_labyrinth(labyrinth_input, height, width, wall_character, path_charact
         return "Ce labyrinthe est sans issue.\n\n" + labyrinth_input
 
     for (x, y) in path:
-        if labyrinth[x][y] not in (start_character, goal_character):
-            labyrinth[x][y] = f'\033[32m{solution_character}\033[0m'
+        if labyrinth[x][y] not in (start_character, goal_character):  # type: ignore
+            labyrinth[x][y] = color_solution_character  # type: ignore
 
     solved_labyrinth_str = '\n'.join([''.join(row) for row in labyrinth])
     number_of_strokes = len(path) - 1
@@ -248,7 +267,7 @@ def get_arguments() -> list[str]:
 
 ##########################   Partie 4 :  Résolution   ###########################
 
-def find_shortest_path():
+def find_shortest_path() -> str | None:
     arguments = get_arguments()
     if not is_valid_arguments(len(arguments) <= 2):
         return
@@ -281,7 +300,7 @@ def find_shortest_path():
 ###########################   Partie 5 :  Affichage   ###########################
 
 
-def display_solved_labyrinth():
+def display_solved_labyrinth() -> None:
     solved_labyrinth_str = find_shortest_path()
     if solved_labyrinth_str is not None:
         print(f"Labyrinthe avec le chemin :\n\n{solved_labyrinth_str}")
