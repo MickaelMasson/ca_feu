@@ -20,11 +20,11 @@ def read_file(file_path: pathlib.Path) -> str:
 
 def get_reading_parameters(file_content: str) -> tuple[int, int, str, str, str, str, str]:
 
-    first_line = file_content.split("\n")[0]
+    first_row = file_content.split("\n")[0]
 
-    height = first_line[0]
+    height = first_row[0]
 
-    for character in first_line[1:]:
+    for character in first_row[1:]:
         if character not in "0123456789":
             break
         else:
@@ -32,19 +32,19 @@ def get_reading_parameters(file_content: str) -> tuple[int, int, str, str, str, 
 
     index_x = file_content.find("x")
 
-    width = first_line[index_x + 1]
+    width = first_row[index_x + 1]
 
-    for character in first_line[index_x + 2:]:
+    for character in first_row[index_x + 2:]:
         if character not in "0123456789":
             break
         else:
             width += character
 
-    wall_character = first_line[-5]
-    path_character = first_line[-4]
-    solution_character = first_line[-3]
-    start_character = first_line[-2]
-    goal_character = first_line[-1]
+    wall_character = first_row[-5]
+    path_character = first_row[-4]
+    solution_character = first_row[-3]
+    start_character = first_row[-2]
+    goal_character = first_row[-1]
     height = int(height)
     width = int(width)
 
@@ -178,82 +178,189 @@ def is_exists_file(file_path: pathlib.Path) -> bool:
 
 def is_valid_labyrinth_file(file_content: str) -> bool:
 
+    def is_not_empty_file(file_content: str) -> bool:
+        if len(file_content) == 0:
+            print("Error, le fichier est vide")
+            return False
+        return True
+
+    def is_min_len_first_row(file_content: str) -> bool:
+        if len(first_row) < 8:
+            print("Error 1,", error)
+            return False
+        return True
+
+    def get_height(first_row: str) -> bool | str:
+        if first_row[0] not in "123456789":
+            print(
+                "Error 2, le paramètre hauteur doit etre exprimé avec un entier positif,\n", error)
+            return False
+        height = first_row[0]
+
+        for character in first_row[1:]:
+            if character not in "0123456789":
+                break
+            else:
+                height += character
+
+        if int(height) < min_height:
+            print(f"Error , la hauteur du labyrinth ne peut etre inférieur à {
+                  min_height}")
+            return False
+        return height
+
+    def is_valid_separator_height_width(first_row: str) -> bool:
+        for character in first_row:
+            if character not in "0123456789x":
+                print(
+                    "Error 3, les paramètres de hauteur et largeur doivent être séparé par le caractère 'x',\n", error)
+                return False
+            if character == "x":
+                return True
+        return False
+
+    def get_width(first_row: str) -> bool | str:
+        index_x = file_content.find("x")
+
+        if not first_row[index_x + 1].isdigit():
+            print(
+                "Error 4, le paramètre largeur doit etre exprimé avec un entier positif,\n", error)
+            return False
+
+        width = first_row[index_x + 1]
+
+        for character in first_row[index_x + 2:]:
+            if character not in "0123456789":
+                break
+            else:
+                width += character
+
+        if int(width) < min_width:
+            print(f"Error , la largeur du labyrinth ne peut etre inférieur à {
+                  min_width}")
+            return False
+
+        return width
+
+    def is_valid_number_of_settings(first_row: str, height: str, width: str):
+
+        len_of_settings = 5
+
+        # -1 pour le x séparateur
+        if len_of_settings != len(first_row) - len(height) - len(width) - 1:
+            print("Error 5, Après les paramètre de Hauteur et largeur, vous devez saisir 5 caractères désignant respectivement;\nles murs, les passages, le chemin le plus court, le départ et enfin l'arrivé")
+            return False
+
+        return True
+
+    def is_valid_height(file_content, height):
+        file_rows = file_content.split("\n")
+        len_labyrinth_rows = len(file_rows) - 1
+        if len_labyrinth_rows != int(height):
+            print("Error , La hauteur du labyrinth doit correspondre a la valeur renseigné dans la ligne de paramètre et il ne doit pas y avoir de ligne vide")
+            return False
+        return True
+
+    def is_valid_width(file_content, width):
+        labyrinth_rows = file_content.split("\n")[1:]
+        for row in labyrinth_rows:
+            if len(row) != int(width):
+                print("Error , La largeur du labyrinth sur chaque ligne doit correspondre à la valeur renseigné dans la ligne de paramètre")
+                return False
+        return True
+
+    def is_only_allowed_character(file_content: str, first_row: str):
+
+        characters_allowed = [first_row[-5], first_row[-4],
+                              first_row[-2], first_row[-1]]
+        labyrinth_rows = file_content.split("\n")[1:]
+
+        for row in labyrinth_rows:
+            for i in row:
+                if i not in characters_allowed:
+                    print(
+                        "Le labyrinth ne peut etre construit qu'avec les caratères renségné dans la ligne des paramètres")
+                    return False
+        return True
+
+    def is_valid_start(file_content: str, first_row: str):
+        start_character = first_row[-2]
+        labyrinth_rows = file_content.split("\n")[1:]
+        count_of_start = 0
+
+        for row in labyrinth_rows:
+            for i in row:
+                if i == start_character:
+                    count_of_start += 1
+
+        if count_of_start == 0:
+            print("Error, le labyrinth doit comporter un départ")
+        elif count_of_start > 1:
+            print("Error, le labyrinth doit comporter un seul départ")
+
+        return True
+
+    def is_valid_goal(file_content: str, first_row: str):
+        goal_character = first_row[-1]
+        labyrinth_rows = file_content.split("\n")[1:]
+        count_of_start = 0
+
+        for row in labyrinth_rows:
+            for i in row:
+                if i == goal_character:
+                    count_of_start += 1
+
+        if count_of_start == 0:
+            print("Error, le labyrinth doit comporter au moins une sortie")
+
+        return True
+
+    min_height = 4
+    min_width = 4
+
     error = """\tLa première ligne du fichier doit se composer comme suit:
         \033[31mhauteur\033[33mx\033[31mlargeur\033[33mmur\033[31mchemin\033[33mchemin_le_plus_court\033[31mdépart\033[33marrivé\033[0m
         Exemple:
         10x10* o12"""
 
-    first_line = file_content.split("\n")[0]
-
-    if len(first_line) < 8:
-        print("Error 1,", error)
+    if not is_not_empty_file(file_content):
         return False
 
-    if not first_line[0].isdigit():
-        print("Error 2, le paramètre hauteur doit etre exprimé avec un entier positif,\n", error)
+    first_row = file_content.split("\n")[0]
+
+    if not is_min_len_first_row(file_content):
         return False
 
-    height = first_line[0]
+    height = get_height(first_row)
 
-    for character in first_line[1:]:
-        if character not in "0123456789":
-            if character != "x":
-                print(
-                    "Error 3, les paramètres de hauteur et largeur doivent être séparé par le caractère 'x',\n", error)
-                return False
-            break
-        else:
-            height += character
-
-    if int(height) < 4:
-        print("Error , la hauteur du labyrinth ne peut etre inférieur à 4")
+    if not height:
         return False
 
-    index_x = file_content.find("x")
-
-    if not first_line[index_x + 1].isdigit():
-        print("Error 4, le paramètre largeur doit etre exprimé avec un entier positif,\n", error)
+    if not is_valid_separator_height_width(first_row):
         return False
 
-    width = first_line[index_x + 1]
+    width = get_width(first_row)
 
-    for character in first_line[index_x + 2:]:
-        if character not in "0123456789":
-            break
-        else:
-            width += character
-
-    if int(width) < 4:
-        print("Error , la largeur du labyrinth ne peut etre inférieur à 4")
+    if not width:
         return False
 
-    len_of_settings = 6  # 5 paramètres + 1 pour le x séparateur
-
-    if len(first_line) - len(height) - len(width) != len_of_settings:
-        print("Error 5, Après les paramètre de Hauteur et largeur, vous devez saisir 5 caractères désignant respectivement;\nles murs, les passages, le chemin le plus court, le départ et enfin l'arrivé")
+    if not is_valid_number_of_settings(first_row, height, width):  # type: ignore
         return False
 
-    labyrinth_rows = file_content.split("\n")[1:]
-    if len(labyrinth_rows) != int(height):
-
-        print("Error , La hauteur du labyrinth doit correspondre a la valeur renseigné dans la ligne de paramètre")
+    if not is_valid_height(file_content, height):
         return False
 
-    for row in labyrinth_rows:
-        if len(row) != int(width):
-            print(len(row))
-            print("Error , La largeur du labyrinth doit correspondre a la valeur renseigné dans la ligne de paramètre")
-            return False
+    if not is_valid_width(file_content, width):
+        return False
 
-    characters_allowed = [first_line[-5],
-                          first_line[-4], first_line[-2], first_line[-1]]
+    if not is_only_allowed_character(file_content, first_row):
+        return False
 
-    for row in labyrinth_rows:
-        for i in row:
-            if i not in characters_allowed:
-                print(
-                    "Le labyrinth ne peut etre construit qu'avec les caratères renségné dans la ligne des paramètres")
-                return False
+    if not is_valid_start(file_content, first_row):
+        return False
+
+    if not is_valid_goal(file_content, first_row):
+        return False
 
     return True
 
