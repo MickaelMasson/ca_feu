@@ -15,6 +15,7 @@ Vous pouvez partir du principe que la chaîne de caractères donnée en argument
 
 ######################   Partie 1 :  Fonctions utilisées   ######################
 
+
 import sys
 TOKENS = [
     ("LEFT_PARENTHESIS", "("),
@@ -30,6 +31,7 @@ TOKENS = [
 
 
 def lexer(string: str) -> list:
+
     tokens = []
     i = 0
 
@@ -56,6 +58,7 @@ def lexer(string: str) -> list:
 
 
 def get_ast(tokens: list) -> list:
+
     start_parenthesis = -1
     for i in range(len(tokens)):
         if tokens[i][0] == "LEFT_PARENTHESIS":
@@ -113,7 +116,8 @@ def get_ast(tokens: list) -> list:
     return tokens[0][1]
 
 
-def evaluate(ast: list):
+def evaluate(ast: list) -> float:  # type: ignore
+
     if isinstance(ast, float):
         return ast
 
@@ -136,13 +140,16 @@ def evaluate(ast: list):
 #######################   Partie 2 :  Gestion d'erreur   ########################
 
 def is_valid_arguments(is_number_of_argument_expected: bool) -> bool:
+
     if not is_number_of_argument_expected:
         print("Error : le nombre d'arguments n'est pas valide")
         return False
+
     return True
 
 
 def are_valid_numbers(expression: str) -> bool:
+
     current_number = ""
     in_number = False
     error = "Error : l'expression contient des nombres avec plusieurs décimales"
@@ -182,14 +189,18 @@ def are_valid_characters(string: str) -> bool:
 
 
 def is_valid_min_tokens(min_tokens_expected: bool) -> bool:
+
     if not min_tokens_expected:
         print("Error, l'expression mathématique doit contenir au moins 3 éléménts")
         return False
+
     return True
 
 
 def is_valid_parenthesis(tokens: list[tuple[str, str]]) -> bool:
+
     parenthesis_count = 0
+
     for token in tokens:
         if token[0] == "LEFT_PARENTHESIS":
             parenthesis_count += 1
@@ -198,9 +209,11 @@ def is_valid_parenthesis(tokens: list[tuple[str, str]]) -> bool:
         if parenthesis_count < 0:
             print("Error : Probleme d'ouverture de parenthese")
             return False
+
     if parenthesis_count != 0:
         print("Error : Probleme de fermeture de parenthese")
         return False
+
     return True
 
 
@@ -251,45 +264,64 @@ def is_valid_syntax(tokens: list[tuple[str, str]]) -> bool:
 ############################   Partie 3 :  Parsing   ############################
 
 def get_arguments() -> list[str]:
+
     arguments = sys.argv[1:]
+
     return arguments
 
 
 ##########################   Partie 4 :  Résolution   ###########################
 
 def get_result_of_expresion() -> float | None:
+
     arguments = get_arguments()
+
     if not is_valid_arguments(len(arguments) == 1):
         return None
+
     expression = arguments[0]
+
     if not are_valid_numbers(expression):
         return None
+
     if not are_valid_characters(expression):
         return None
+
     tokens = lexer(expression)
+
     if not is_valid_min_tokens(len(tokens) >= 3):
         return None
+
     if not is_valid_parenthesis(tokens):
         return None
+
     if not is_valid_syntax(tokens):
         return None
+
     ast = get_ast(tokens)
     result = evaluate(ast)
+
     return result
 
 
 ###########################   Partie 5 :  Affichage   ###########################
 
 def display_result_of_expresion() -> None:
+
     results = get_result_of_expresion()
+
     if results == None:
         return
+
     if results.is_integer():
         results = int(results)
+
     arguments = get_arguments()
     expression = arguments[0]
+
     print(f"{expression} = {results}")
-    return
+
+    return None
 
 
 display_result_of_expresion()
