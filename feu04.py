@@ -34,8 +34,6 @@
 # Vous trouverez un générateur de plateau sur la feuille suivante.
 
 
-# import time
-# import random
 import pathlib
 import sys
 
@@ -95,7 +93,8 @@ def get_reading_parameters(file_content: str) -> tuple[int, str, str, str]:
     return number_of_rows, empty_character, obstacle_character, display_square_character
 
 
-def get_biggest_square(obstacle_character, plate_list):
+def get_biggest_square(obstacle_character: str, plate_list: list[tuple[int, int, str]]) -> tuple[tuple[int, int], tuple[int, int]]:
+
     start_coordinates = (0, 0)
     end_coordinates = (0, 0)
     air_of_square = 0
@@ -140,8 +139,8 @@ def get_biggest_square(obstacle_character, plate_list):
     return start_coordinates, end_coordinates
 
 
-def get_plate_with_display_square_character(
-        display_square_character: str, plate_list: list[tuple[int, int, str]], start_coordinates: tuple[int, int], end_coordinates: tuple[int, int]) -> list[tuple[int, int, str]]:
+def get_plate_with_display_square_character(display_square_character: str, plate_list: list[tuple[int, int, str]],
+                                            start_coordinates: tuple[int, int], end_coordinates: tuple[int, int]) -> list[tuple[int, int, str]]:
 
     new_plate = []
     color_square_character = f"\033[31m{display_square_character}\033[0m"
@@ -172,27 +171,34 @@ def get_string_from_list(plate_list: list[tuple[int, int, str]]) -> str:
 #######################   Partie 2 :  Gestion d'erreur   ########################
 
 def is_valid_arguments(is_number_of_argument_expected: bool) -> bool:
+
     if not is_number_of_argument_expected:
         print("Error : Vous devez saisir le nom du fichier .txt qui contient le plateau")
         return False
+
     return True
 
 
 def is_valid_file_name(is_valid_file_name: bool) -> bool:
+
     if not is_valid_file_name:
         print("Error, vous devez saisir les noms du fichier avec l'extention : .txt")
         return False
+
     return True
 
 
 def is_exists_file(file_path: pathlib.Path) -> bool:
+
     if not pathlib.Path.exists(file_path):
         print(f"\033[31mFichier non trouvé :\033[0m {file_path}")
         return False
+
     return True
 
 
 def is_valid_plateau(file_content: str) -> bool:
+
     firts_line = file_content.split("\n")[0]
 
     if len(firts_line) < 4:
@@ -210,6 +216,7 @@ def is_valid_plateau(file_content: str) -> bool:
             break
         else:
             number_of_rows += character
+
     if len(firts_line) != len(number_of_rows) + 3:
         print("Error 3, la premiere ligne du fichier doit contenir 4 paramètres\nEn premier ; le nombre de ligne du Plateau\nEn deuxième ; le caractère vide\nEn troisième ; le caractère obstacle\nEn quatrième ; le caractère plein")
         return False
@@ -222,6 +229,7 @@ def is_valid_plateau(file_content: str) -> bool:
 
     rows = file_content.split("\n")
     plate = rows[1:]
+
     for row in plate:
         for character in row:
             if character not in [empty_character, obstacle_character]:
@@ -253,23 +261,30 @@ def is_valid_plateau(file_content: str) -> bool:
 ############################   Partie 3 :  Parsing   ############################
 
 def get_arguments() -> list[str]:
+
     arguments = sys.argv[1:]
+
     return arguments
 
 
 ##########################   Partie 4 :  Résolution   ###########################
 def find_biggest_square():
+
     arguments = get_arguments()
+
     if not is_valid_arguments(len(arguments) == 1):
         return None
+
     file_name = arguments[0]
 
     if not is_valid_file_name(file_name.endswith(".txt")):
         return None
+
     file_path = ANNEXE_FOLDER_PATH / file_name
 
     if not is_exists_file(file_path):
         return None
+
     file_content = read_file(file_path)
 
     if not is_valid_plateau(file_content):
@@ -297,6 +312,5 @@ def find_biggest_square():
 
 
 ###########################   Partie 5 :  Affichage   ###########################
-
 
 find_biggest_square()
