@@ -22,7 +22,7 @@ Gérer les problèmes potentiels d’arguments."""
 
 
 import sys
-def display_rectangle(rectangle_width: int, rectangle_height: int) :
+def display_rectangle(rectangle_width: int, rectangle_height: int) -> None:
 
     corner_character = "o"
     horizontal_character = "-"
@@ -40,44 +40,55 @@ def display_rectangle(rectangle_width: int, rectangle_height: int) :
             print(first_or_last_line)
         else:
             print(intermediate_line)
-    return
+
+    return None
 
 
 #######################   Partie 2 :  Gestion d'erreur   ########################
 
 def is_valid_arguments(is_number_of_argument_expected: bool) -> bool:
+
     if not is_number_of_argument_expected:
         print("Error : le nombre d'arguments n'est pas valide")
         return False
+
     return True
 
 
 def is_digit(string: str) -> bool:
+
     for character in string:
         if not "0" <= character <= "9":
             print(f"Error, '{string}' n'est pas un nombre entier positif")
             return False
+
     return True
 
 
 def is_greater_than(is_min_rectangle_size: bool) -> bool:
+
     if not is_min_rectangle_size:
         print(f"Error, la taille minimum de votre rectangle doit etre de 1x1")
         return False
+
     return True
 
 
 ############################   Partie 3 :  Parsing   ############################
 
 def get_arguments() -> list[str]:
+
     arguments = sys.argv[1:]
+
     return arguments
 
 
 ##########################   Partie 4 :  Résolution   ###########################
 
 def get_rectangle() -> None:
+
     arguments = get_arguments()
+
     if not is_valid_arguments(len(arguments) == 2):
         return None
 
@@ -94,7 +105,8 @@ def get_rectangle() -> None:
     rectangle_height = numbers[1]
 
     display_rectangle(rectangle_width, rectangle_height)
-    return
+
+    return None
 
 
 ###########################   Partie 5 :  Affichage   ###########################
