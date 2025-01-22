@@ -37,7 +37,6 @@ FILE_WITH_PATH = PATH / file_name
 
 ######################   Partie 1 :  Fonctions utilisées   ######################
 
-
 def write_file(content_file: str) -> None:
 
     with open(FILE_WITH_PATH, "w") as objet_file:
@@ -64,39 +63,49 @@ def plate_generator(x: int, y: int, density: int) -> str:
 #######################   Partie 2 :  Gestion d'erreur   ########################
 
 def is_valid_arguments(is_number_of_argument_expected: bool) -> bool:
+
     if not is_number_of_argument_expected:
         print("Error : Vous devez saisir 3 nombres entiers, respectivement pour la 'largeur du plateau', la 'hauteur du plateau' et la 'densité du plateau'")
         return False
+
     return True
 
 
 def is_valid_density(density: int, y: int) -> bool:
+
     if density > y * 2 or density < 1:
         print(f"Error : La densité ne peux dépasser 2y, pour ce plateau de {
               y} de large la densité doit etre comprise entre 1 et {y * 2}")
         return False
+
     return True
 
 
 def is_digit(arguments: list[str]) -> bool:
+
     for argument in arguments:
         if not argument.isdigit():
             print(f"Error : {argument} doit etre un nombre entier")
             return False
+
     return True
 
 
 ############################   Partie 3 :  Parsing   ############################
 
 def get_arguments() -> list[str]:
+
     arguments = sys.argv[1:]
+
     return arguments
 
 
 ##########################   Partie 4 :  Résolution   ###########################
 
-def get_plate() -> None:
+def get_plate_file() -> None:
+
     arguments = get_arguments()
+
     if not is_valid_arguments(len(arguments) == 3):
         return None
 
@@ -110,13 +119,13 @@ def get_plate() -> None:
     if not is_valid_density(int(density), int(y)):
         return None
 
-    plateau = plate_generator(x, y, density)
+    plate = plate_generator(x, y, density)
 
-    write_file(plateau)
+    write_file(plate)
 
     print("Plateau généré avec succes.")
     return
 
 
 ###########################   Partie 5 :  Affichage   ###########################
-get_plate()
+get_plate_file()
