@@ -7,8 +7,8 @@ import feu07
 PATH = pathlib.Path.cwd()
 ANNEX_PATH = PATH / "annexe"
 
-######################   Partie 1 :  Fonctions utilisées   ######################
 
+######################   Partie 1 :  Fonctions utilisées   ######################
 
 def read_file(file_path: pathlib.Path) -> str:
 
@@ -184,7 +184,7 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
             return False
         return True
 
-    def is_min_len_first_row(file_content: str) -> bool:
+    def is_min_len_first_row(first_row) -> bool:
         if len(first_row) < 8:
             print("Error 1,", error)
             return False
@@ -242,7 +242,7 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
 
         return width
 
-    def is_valid_number_of_settings(first_row: str, height: str, width: str):
+    def is_valid_number_of_settings(first_row: str, height: str, width: str) -> bool:
 
         len_of_settings = 5
 
@@ -253,7 +253,7 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
 
         return True
 
-    def is_valid_height(file_content, height):
+    def is_valid_height(file_content: str, height: str) -> bool:
         file_rows = file_content.split("\n")
         len_labyrinth_rows = len(file_rows) - 1
         if len_labyrinth_rows != int(height):
@@ -261,7 +261,7 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
             return False
         return True
 
-    def is_valid_width(file_content, width):
+    def is_valid_width(file_content: str, width: str) -> bool:
         labyrinth_rows = file_content.split("\n")[1:]
         for row in labyrinth_rows:
             if len(row) != int(width):
@@ -269,7 +269,7 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
                 return False
         return True
 
-    def is_only_allowed_character(file_content: str, first_row: str):
+    def is_only_allowed_character(file_content: str, first_row: str) -> bool:
 
         characters_allowed = [first_row[-5], first_row[-4],
                               first_row[-2], first_row[-1]]
@@ -283,7 +283,7 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
                     return False
         return True
 
-    def is_valid_start(file_content: str, first_row: str):
+    def is_valid_start(file_content: str, first_row: str) -> bool:
         start_character = first_row[-2]
         labyrinth_rows = file_content.split("\n")[1:]
         count_of_start = 0
@@ -295,12 +295,14 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
 
         if count_of_start == 0:
             print("Error, le labyrinth doit comporter un départ")
+            return False
         elif count_of_start > 1:
             print("Error, le labyrinth doit comporter un seul départ")
+            return False
 
         return True
 
-    def is_valid_goal(file_content: str, first_row: str):
+    def is_valid_goal(file_content: str, first_row: str) -> bool:
         goal_character = first_row[-1]
         labyrinth_rows = file_content.split("\n")[1:]
         count_of_start = 0
@@ -312,6 +314,7 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
 
         if count_of_start == 0:
             print("Error, le labyrinth doit comporter au moins une sortie")
+            return False
 
         return True
 
@@ -328,7 +331,7 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
 
     first_row = file_content.split("\n")[0]
 
-    if not is_min_len_first_row(file_content):
+    if not is_min_len_first_row(first_row):
         return False
 
     height = get_height(first_row)
@@ -347,10 +350,10 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
     if not is_valid_number_of_settings(first_row, height, width):  # type: ignore
         return False
 
-    if not is_valid_height(file_content, height):
+    if not is_valid_height(file_content, height):  # type: ignore
         return False
 
-    if not is_valid_width(file_content, width):
+    if not is_valid_width(file_content, width):  # type: ignore
         return False
 
     if not is_only_allowed_character(file_content, first_row):
@@ -368,14 +371,18 @@ def is_valid_labyrinth_file(file_content: str) -> bool:
 ############################   Partie 3 :  Parsing   ############################
 
 def get_arguments() -> list[str]:
+
     arguments = sys.argv
+
     return arguments
 
 
 ##########################   Partie 4 :  Résolution   ###########################
 
-def find_shortest_path() -> str | None:
+def get_solved_labyrinth() -> str | None:
+
     arguments = get_arguments()
+
     if not is_valid_arguments(len(arguments) <= 2):
         return
 
@@ -404,15 +411,17 @@ def find_shortest_path() -> str | None:
 
     return solved_labyrinth
 
+
 ###########################   Partie 5 :  Affichage   ###########################
 
-
 def display_solved_labyrinth() -> None:
-    solved_labyrinth_str = find_shortest_path()
+
+    solved_labyrinth_str = get_solved_labyrinth()
+
     if solved_labyrinth_str is not None:
         print(f"Labyrinthe avec le chemin :\n\n{solved_labyrinth_str}")
 
-    return
+    return None
 
 
 display_solved_labyrinth()
