@@ -1,19 +1,38 @@
 """Labyrinthe : annexe"""
 
 import random
+import pathlib
+
 
 height = 12
 width = 55
-wall = "█"  # chars[0]
-empty = " "  # chars[1]
-way = "+"  # chars[2]
-start = "1"  # chars[3]
-end = "2"  # chars[4]
+wall_character = "█"  # chars[0]
+empty_character = " "  # chars[1]
+path_character = "+"  # chars[2]
+start_character = "1"  # chars[3]
+end_character = "2"  # chars[4]
+folder_path = "annexe"
+file_name = "labyrinth.txt"
+
+CURRENT_PATH = pathlib.Path.cwd()
+PATH = CURRENT_PATH / folder_path
+FILE_WITH_PATH = PATH / file_name
+
+
+######################   Partie 1 :  Fonctions utilisées   ######################
+
+def write_file(content_file: str) -> None:
+
+    with open(FILE_WITH_PATH, "w") as objet_file:
+        objet_file.write(content_file)
+
+    return None
 
 
 def labyrinth_generator():
-    chars = f"{wall}{empty}{way}{start}{end}"
 
+    chars = f"{wall_character}{empty_character}{
+        path_character}{start_character}{end_character}"
     entry_directions = ["north", "east", "south", "west"]
     exit_directions = entry_directions
     place_entry = random.choice(entry_directions)
@@ -68,16 +87,40 @@ def labyrinth_generator():
     for y in range(height):
         for x in range(width):
             if y == entry_y and x == entry_x:
-                labyrinth_str += start
+                labyrinth_str += start_character
             elif y == exit_y and x == exit_x:
-                labyrinth_str += end
+                labyrinth_str += end_character
             elif (1 <= y <= height - 2 and 1 <= x <= width - 2 and random.randint(0, 100) > 20) or ():
-                labyrinth_str += empty
+                labyrinth_str += empty_character
             elif (entry_must_path_x == x and entry_must_path_y == y) or (exit_must_path_x == x and exit_must_path_y == y):
-                labyrinth_str += empty
+                labyrinth_str += empty_character
             else:
-                labyrinth_str += wall
+                labyrinth_str += wall_character
         if y != height - 1:
             labyrinth_str += "\n"
 
     return labyrinth_str
+
+#######################   Partie 2 :  Gestion d'erreur   ########################
+
+
+############################   Partie 3 :  Parsing   ############################
+
+
+##########################   Partie 4 :  Résolution   ###########################
+
+def get_labyrinth_file() -> None:
+
+    labyrinth = labyrinth_generator()
+
+    write_file(labyrinth)
+
+    print("Labyrinthe généré avec succes.")
+    return
+
+###########################   Partie 5 :  Affichage   ###########################
+
+
+if __name__ == "__main__":
+
+    get_labyrinth_file()
