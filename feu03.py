@@ -237,7 +237,7 @@ def is_valid_sudoku_grid(sudoku: list[tuple[int, int, list[int]]] | None) -> boo
     return True
 
 
-def is_complete_resolved(sudoku_list):
+def is_complete_resolved(sudoku_list: list[tuple[int, int, list[int]]]) -> bool:
 
     for cell in sudoku_list:
         if len(cell[2]) > 1:
@@ -321,24 +321,31 @@ def is_valid_input_sudoku(file_content: str) -> bool:
 ############################   Partie 3 :  Parsing   ############################
 
 def get_arguments() -> list[str]:
+
     arguments = sys.argv[1:]
+
     return arguments
 
 
 ##########################   Partie 4 :  Résolution   ###########################
 
 def get_resolved_sudoku() -> None:
+
     arguments = get_arguments()
+
     if not is_valid_arguments(len(arguments) == 1):
         return None
+
     file_name = arguments[0]
 
     if not is_valid_file_name(file_name.endswith(".txt")):
         return None
+
     file_path = ANNEX_PATH / file_name
 
     if not is_exists_file(file_path):
         return None
+
     file_content = read_file(file_path)
 
     if not is_valid_input_sudoku(file_content):
