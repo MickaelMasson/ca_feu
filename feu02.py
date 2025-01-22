@@ -56,6 +56,7 @@ def get_x_y_character_list(string: str) -> list[tuple[int, int, str]]:
     new_list = []
     x = 0
     y = 0
+
     for character in string:
         if character == "\n":
             y += 1
@@ -71,15 +72,18 @@ def get_x_y_character_list(string: str) -> list[tuple[int, int, str]]:
 def size_shape(list_: list[tuple[int, int, str]]) -> tuple[int, int]:
 
     index_width = 0
+
     for i in list_:
         if i[0] > index_width:
             index_width = i[0]
-    width = index_width + 1
 
+    width = index_width + 1
     index_height = 0
+
     for i in list_:
         if i[1] > index_height:
             index_height = i[1]
+
     height = index_height + 1
 
     return width, height
@@ -106,7 +110,7 @@ def find_shape(board_list: list[tuple[int, int, str]], width_board: int, height_
     return []
 
 
-def display_result(width_board: int, height_board: int, match_coordinates: list) -> None:
+def display_result_of_expression(width_board: int, height_board: int, match_coordinates: list) -> None:
 
     if len(match_coordinates) == 0:
         print("Introuvable")
@@ -114,8 +118,8 @@ def display_result(width_board: int, height_board: int, match_coordinates: list)
 
     x = match_coordinates[0][0]
     y = match_coordinates[0][1]
-
     string_display = ""
+
     for line in range(height_board):
         for column in range(width_board):
             for x_y_character in match_coordinates:
@@ -196,7 +200,7 @@ def get_match() -> None:
     match_coordinates = find_shape(board_list, width_board, height_board,
                                    to_find_list, width_to_find, height_to_find)
 
-    display_result(width_board, height_board, match_coordinates)
+    display_result_of_expression(width_board, height_board, match_coordinates)
 
     return
 
