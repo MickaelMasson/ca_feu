@@ -411,16 +411,16 @@ def get_solved_labyrinth() -> str | None:
     arguments = get_arguments()
 
     if not is_valid_arguments(len(arguments) <= 2):
-        return
+        return None
 
     if len(arguments) == 2:
         file_name = arguments[1]
         if not is_valid_file_name(file_name.endswith(".txt")):
-            return
+            return None
         file_path = ANNEX_PATH / file_name
 
         if not is_exists_file(file_path):
-            return
+            return None
 
         labyrinth_input = read_file(file_path)
 
@@ -428,7 +428,7 @@ def get_solved_labyrinth() -> str | None:
         labyrinth_input = feu07.labyrinth_generator()
 
     if not is_valid_labyrinth_file(labyrinth_input):
-        return
+        return None
 
     height, width, wall_character, path_character, solution_character, start_character, goal_character = get_reading_parameters(
         labyrinth_input)
