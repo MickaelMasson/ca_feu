@@ -45,19 +45,19 @@ def write_file(content_file: str) -> None:
     return None
 
 
-def plate_generator(x: int, y: int, density: int) -> str:
+def board_generator(x: int, y: int, density: int) -> str:
 
-    plateau_str = f"{y}{empty_character}{
+    board_str = f"{y}{empty_character}{
         obstacle_character}{display_square_character}\n"
 
     for i in range(y):
         for _j in range(x):
-            plateau_str += obstacle_character if random.randint(
+            board_str += obstacle_character if random.randint(
                 0, y * 2) < density else empty_character
         if i < y - 1:
-            plateau_str += "\n"
+            board_str += "\n"
 
-    return plateau_str
+    return board_str
 
 
 #######################   Partie 2 :  Gestion d'erreur   ########################
@@ -102,7 +102,7 @@ def get_arguments() -> list[str]:
 
 ##########################   Partie 4 :  Résolution   ###########################
 
-def get_plate_file() -> None:
+def get_board_file() -> None:
 
     arguments = get_arguments()
 
@@ -119,13 +119,13 @@ def get_plate_file() -> None:
     if not is_valid_density(int(density), int(y)):
         return None
 
-    plate = plate_generator(x, y, density)
+    board = board_generator(x, y, density)
 
-    write_file(plate)
+    write_file(board)
 
     print("Plateau généré avec succes.")
     return
 
 
 ###########################   Partie 5 :  Affichage   ###########################
-get_plate_file()
+get_board_file()

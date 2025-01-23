@@ -38,7 +38,7 @@ def get_list_width_and_height(file_path: pathlib.Path) -> tuple[list[tuple[int, 
 
     content_file = read_file(file_path)
     x_y_character_list = get_x_y_character_list(content_file)
-    width, height = size_shape(x_y_character_list)
+    width, height = get_size_shape(x_y_character_list)
 
     return x_y_character_list, width, height
 
@@ -69,7 +69,7 @@ def get_x_y_character_list(string: str) -> list[tuple[int, int, str]]:
     return new_list
 
 
-def size_shape(list_: list[tuple[int, int, str]]) -> tuple[int, int]:
+def get_size_shape(list_: list[tuple[int, int, str]]) -> tuple[int, int]:
 
     index_width = 0
 
