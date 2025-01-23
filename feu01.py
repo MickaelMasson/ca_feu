@@ -223,7 +223,7 @@ def is_valid_syntax(tokens: list[tuple[str, str]]) -> bool:
     first_token = tokens[0][0]
     last_token = tokens[-1][0]
 
-    if first_token in ["TIMES", "DIVIDE", "MODULO", "PLUS", "RIGHT_PARENTHESIS"]:
+    if first_token != "NUMBER" and last_token != "LEFT_PARENTHESIS":
         print("Error : le premier élémént de l'expression mathématique doit etre un nombre ou une parenthèse ouvrante")
         return False
 

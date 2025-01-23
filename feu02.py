@@ -89,7 +89,7 @@ def size_shape(list_: list[tuple[int, int, str]]) -> tuple[int, int]:
     return width, height
 
 
-def find_shape(board_list: list[tuple[int, int, str]], width_board: int, height_board: int, to_find_list: list[
+def search_shape_in_board(board_list: list[tuple[int, int, str]], width_board: int, height_board: int, to_find_list: list[
         tuple[int, int, str]], width_to_find: int, height_to_find: int) -> list:
 
     for y in range(height_board - height_to_find + 1):
@@ -108,30 +108,6 @@ def find_shape(board_list: list[tuple[int, int, str]], width_board: int, height_
                         for (x, y, character) in to_find_list]
 
     return []
-
-
-def display_result_of_expression(width_board: int, height_board: int, match_coordinates: list) -> None:
-
-    if len(match_coordinates) == 0:
-        print("Introuvable")
-        return
-
-    x = match_coordinates[0][0]
-    y = match_coordinates[0][1]
-    string_display = ""
-
-    for line in range(height_board):
-        for column in range(width_board):
-            for x_y_character in match_coordinates:
-                if column == x_y_character[0] and line == x_y_character[1]:
-                    character = x_y_character[2]
-                    string_display += character
-                    break
-            else:
-                string_display += "-"
-        string_display += "\n"
-
-    return print(f"Trouvé !\nCoordonnées : {x},{y}\n{string_display}")
 
 
 #######################   Partie 2 :  Gestion d'erreur   ########################
@@ -162,6 +138,15 @@ def is_exists_file(file_path: pathlib.Path) -> bool:
     return True
 
 
+def is_shape_in_board(is_shape_in_board: bool) -> bool:
+
+    if not is_shape_in_board:
+        print("Introuvable")
+        return False
+
+    return True
+
+
 ############################   Partie 3 :  Parsing   ############################
 
 def get_arguments() -> list[str]:
@@ -173,11 +158,13 @@ def get_arguments() -> list[str]:
 
 ##########################   Partie 4 :  Résolution   ###########################
 
-def get_match() -> None:
+def get_shape_coordinates_in_board() -> tuple[int, int, list[tuple[int, int, str]]] | None:
 
     arguments = get_arguments()
+
     if not is_valid_arguments(len(arguments) == 2):
         return None
+
     for argument in arguments:
         if not is_valid_file_name(argument.endswith(".txt")):
             return None
@@ -197,14 +184,41 @@ def get_match() -> None:
     to_find_list, width_to_find, height_to_find = get_list_width_and_height(
         to_find_file_path)
 
-    match_coordinates = find_shape(board_list, width_board, height_board,
-                                   to_find_list, width_to_find, height_to_find)
+    shape_coordinates_in_board = search_shape_in_board(board_list, width_board, height_board,
+                                                       to_find_list, width_to_find, height_to_find)
 
-    display_result_of_expression(width_board, height_board, match_coordinates)
+    if not is_shape_in_board(len(shape_coordinates_in_board) != 0):
+        return None
 
-    return
+    return width_board, height_board, shape_coordinates_in_board
 
 
 ###########################   Partie 5 :  Affichage   ###########################
+def display_shape_coordinates_in_board() -> None:
 
-get_match()
+    if get_shape_coordinates_in_board() is None:
+        return None
+
+    width_board, height_board, shape_coordinates_in_board = get_shape_coordinates_in_board()  # type: ignore
+
+    x = shape_coordinates_in_board[0][0]
+    y = shape_coordinates_in_board[0][1]
+    string_display = ""
+
+    for line in range(height_board):
+        for column in range(width_board):
+            for x_y_character in shape_coordinates_in_board:
+                if column == x_y_character[0] and line == x_y_character[1]:
+                    character = x_y_character[2]
+                    string_display += character
+                    break
+            else:
+                string_display += "-"
+        string_display += "\n"
+
+    print(f"Trouvé !\nCoordonnées : {x},{y}\n{string_display}")
+
+    return None
+
+
+display_shape_coordinates_in_board()
