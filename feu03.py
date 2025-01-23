@@ -28,7 +28,6 @@ def resolve_sudoku(sudoku: list[tuple[int, int, list[int]]]) -> list[tuple[int, 
                         if j in new_possible_number_in_cell:
                             temp_list.append(j)
                     i[2] = temp_list  # type: ignore
-
             for i in new_sudoku:
                 if i[1] == y and len(i[2]) > 1:
                     j_is_solution = True
@@ -293,11 +292,8 @@ def is_exists_file(file_path: pathlib.Path) -> bool:
 
 def is_valid_input_sudoku(file_content: str) -> bool:
 
-    error = "Error, la grille de sudoku n'est pas au bon format.\nVous devez saisir 9 lignes composé de 9 chiffres ou . pour les cellule vides"
-
-    if len(file_content) != 89:
-        print(error)
-        return False
+    error = "Error, la grille de sudoku n'est pas au bon format.\n" + \
+        "Vous devez saisir 9 lignes composé de 9 chiffres ou . pour les cellule vides"
 
     rows = file_content.split("\n")
 
@@ -329,18 +325,17 @@ def get_arguments() -> list[str]:
 
 ##########################   Partie 4 :  Résolution   ###########################
 
-def get_resolved_sudoku() -> None:
+def write_in_file_resolved_sudoku() -> None:
 
     arguments = get_arguments()
 
     if not is_valid_arguments(len(arguments) == 1):
         return None
 
-    file_name = arguments[0]
-
-    if not is_valid_file_name(file_name.endswith(".txt")):
+    if not is_valid_file_name(arguments[0].endswith(".txt")):
         return None
 
+    file_name = arguments[0]
     file_path = ANNEX_PATH / file_name
 
     if not is_exists_file(file_path):
@@ -379,4 +374,4 @@ def get_resolved_sudoku() -> None:
 
 
 ###########################   Partie 5 :  Affichage   ###########################
-get_resolved_sudoku()
+write_in_file_resolved_sudoku()
