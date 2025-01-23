@@ -445,8 +445,10 @@ def display_solved_labyrinth() -> None:
 
     solved_labyrinth_str = get_solved_labyrinth()
 
-    if solved_labyrinth_str is not None:
-        print(f"Labyrinthe avec le chemin :\n\n{solved_labyrinth_str}")
+    if solved_labyrinth_str is None:
+        return None
+
+    print(f"Labyrinthe avec le chemin :\n\n{solved_labyrinth_str}")
 
     return None
 
