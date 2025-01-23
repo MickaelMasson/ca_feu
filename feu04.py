@@ -54,25 +54,25 @@ def read_file(file_path: pathlib.Path) -> str:
     return file_content
 
 
-def get_plate_list(plate_str: str) -> list[tuple[int, int, str]]:
+def get_board_list(board_str: str) -> list[tuple[int, int, str]]:
 
-    plate_without_settings = plate_str.split("\n", 1)[1]
-    plate_list = []
+    board_without_settings = board_str.split("\n", 1)[1]
+    board_list = []
     x = 0
     y = 0
 
-    for character in plate_without_settings:
+    for character in board_without_settings:
         if character == "\n":
             y += 1
             x = 0
             continue
-        plate_list.append([x, y, character])
+        board_list.append([x, y, character])
         x += 1
 
-    return plate_list
+    return board_list
 
 
-def get_reading_parameters(file_content: str) -> tuple[int, str, str, str]:
+def get_reading_settings(file_content: str) -> tuple[int, str, str, str]:
 
     settings = file_content.split("\n")[0]
 
@@ -93,7 +93,7 @@ def get_reading_parameters(file_content: str) -> tuple[int, str, str, str]:
     return number_of_rows, empty_character, obstacle_character, display_square_character
 
 
-def get_biggest_square(obstacle_character: str, plate_list: list[tuple[int, int, str]]) -> tuple[tuple[int, int], tuple[int, int]]:
+def get_biggest_square(obstacle_character: str, board_list: list[tuple[int, int, str]]) -> tuple[tuple[int, int], tuple[int, int]]:
 
     start_coordinates = (0, 0)
     end_coordinates = (0, 0)
@@ -101,26 +101,26 @@ def get_biggest_square(obstacle_character: str, plate_list: list[tuple[int, int,
     temp_start_coordinates = (0, 0)
     temp_end_coordinates = (0, 0)
 
-    for i in range(len(plate_list)):
+    for i in range(len(board_list)):
 
-        if plate_list[i][2] == obstacle_character:
+        if board_list[i][2] == obstacle_character:
             continue
 
-        temp_start_coordinates = (plate_list[i][0], plate_list[i][1])
-        temp_end_coordinates = (plate_list[i][0], plate_list[i][1])
+        temp_start_coordinates = (board_list[i][0], board_list[i][1])
+        temp_end_coordinates = (board_list[i][0], board_list[i][1])
         last_x_possible = None
 
-        for j in range(i, len(plate_list)):
-            if (plate_list[j][0] < temp_start_coordinates[0] or
-                    plate_list[j][1] < temp_start_coordinates[1]):
+        for j in range(i, len(board_list)):
+            if (board_list[j][0] < temp_start_coordinates[0] or
+                    board_list[j][1] < temp_start_coordinates[1]):
                 continue
-            if last_x_possible is not None and plate_list[j][0] >= last_x_possible:
+            if last_x_possible is not None and board_list[j][0] >= last_x_possible:
                 continue
-            if plate_list[j][2] == obstacle_character:
-                last_x_possible = plate_list[j][0]
+            if board_list[j][2] == obstacle_character:
+                last_x_possible = board_list[j][0]
                 continue
 
-            temp_end_coordinates = (plate_list[j][0], plate_list[j][1])
+            temp_end_coordinates = (board_list[j][0], board_list[j][1])
 
             if (temp_end_coordinates[0] - temp_start_coordinates[0]) != (
                     temp_end_coordinates[1] - temp_start_coordinates[1]):
@@ -139,33 +139,33 @@ def get_biggest_square(obstacle_character: str, plate_list: list[tuple[int, int,
     return start_coordinates, end_coordinates
 
 
-def get_plate_with_display_square_character(display_square_character: str, plate_list: list[tuple[int, int, str]],
+def get_board_with_display_square_character(display_square_character: str, board_list: list[tuple[int, int, str]],
                                             start_coordinates: tuple[int, int], end_coordinates: tuple[int, int]) -> list[tuple[int, int, str]]:
 
-    new_plate = []
+    new_board_list = []
     color_square_character = f"\033[31m{display_square_character}\033[0m"
 
-    for i in plate_list:
+    for i in board_list:
         if start_coordinates[0] <= i[0] <= end_coordinates[0] and start_coordinates[1] <= i[1] <= end_coordinates[1]:
-            new_plate.append([i[0], i[1], color_square_character])
+            new_board_list.append([i[0], i[1], color_square_character])
         else:
-            new_plate.append(i)
+            new_board_list.append(i)
 
-    return new_plate
+    return new_board_list
 
 
-def get_string_from_list(plate_list: list[tuple[int, int, str]]) -> str:
+def get_string_from_list(board_list: list[tuple[int, int, str]]) -> str:
 
-    plate_str = ""
+    board_str = ""
     line_index = 0
 
-    for i in plate_list:
+    for i in board_list:
         if i[1] != line_index:
-            plate_str += "\n"
+            board_str += "\n"
             line_index = i[1]
-        plate_str += str(i[2])
+        board_str += str(i[2])
 
-    return plate_str
+    return board_str
 
 
 #######################   Partie 2 :  Gestion d'erreur   ########################
@@ -197,7 +197,7 @@ def is_exists_file(file_path: pathlib.Path) -> bool:
     return True
 
 
-def is_valid_plateau(file_content: str) -> bool:
+def is_valid_board(file_content: str) -> bool:
 
     firts_line = file_content.split("\n")[0]
 
@@ -228,9 +228,9 @@ def is_valid_plateau(file_content: str) -> bool:
     number_of_rows = int(number_of_rows)
 
     rows = file_content.split("\n")
-    plate = rows[1:]
+    board = rows[1:]
 
-    for row in plate:
+    for row in board:
         for character in row:
             if character not in [empty_character, obstacle_character]:
                 print(f"Error 4, la carte doit contenir uniquement les caractères suivants : '{
@@ -241,17 +241,17 @@ def is_valid_plateau(file_content: str) -> bool:
         print('Error 5, le plateau doit contenir au moins une ligne')
         return False
 
-    if len(plate[0]) < 1:
+    if len(board[0]) < 1:
         print('Error 6, le plateau doit contenir au moins un caratère par ligne')
         return False
 
-    for row in plate:
-        if len(row) != len(plate[0]):
+    for row in board:
+        if len(row) != len(board[0]):
             print(
                 "Error 7, toutes les lignes du plateau doivent être de la même longueur")
             return False
 
-    if len(plate) != number_of_rows:
+    if len(board) != number_of_rows:
         print("Error 8, le nombre de ligne du plateau doit correspondre à la valeur du premier paramètre dans la premiere ligne du fichier")
         return False
 
@@ -268,18 +268,17 @@ def get_arguments() -> list[str]:
 
 
 ##########################   Partie 4 :  Résolution   ###########################
-def find_biggest_square():
+def display_biggest_square():
 
     arguments = get_arguments()
 
     if not is_valid_arguments(len(arguments) == 1):
         return None
 
-    file_name = arguments[0]
-
-    if not is_valid_file_name(file_name.endswith(".txt")):
+    if not is_valid_file_name(arguments[0].endswith(".txt")):
         return None
 
+    file_name = arguments[0]
     file_path = ANNEXE_FOLDER_PATH / file_name
 
     if not is_exists_file(file_path):
@@ -287,30 +286,30 @@ def find_biggest_square():
 
     file_content = read_file(file_path)
 
-    if not is_valid_plateau(file_content):
+    if not is_valid_board(file_content):
         return None
 
     print("\n", "-" * 14, " Plateau proposé ",
           "-" * 14, "\n\n", file_content, "\n\n", sep="")
 
-    number_of_rows, empty_character, obstacle_character, display_square_character = get_reading_parameters(
+    number_of_rows, empty_character, obstacle_character, display_square_character = get_reading_settings(
         file_content)
 
-    plate_list = get_plate_list(file_content)
+    board_list = get_board_list(file_content)
 
     start_coordinates, end_coordinates = get_biggest_square(
-        obstacle_character, plate_list)
+        obstacle_character, board_list)
 
-    plate_with_biggest_square = get_plate_with_display_square_character(
-        display_square_character, plate_list, start_coordinates, end_coordinates)
+    board_with_biggest_square = get_board_with_display_square_character(
+        display_square_character, board_list, start_coordinates, end_coordinates)
 
-    plate_with_biggest_square_str = get_string_from_list(
-        plate_with_biggest_square)
+    board_with_biggest_square_str = get_string_from_list(
+        board_with_biggest_square)
 
     print("-" * 5, " Plateau avec le plus grand carré ",
-          "-" * 6, "\n\n", plate_with_biggest_square_str, "\n", sep="")
+          "-" * 6, "\n\n", board_with_biggest_square_str, "\n", sep="")
 
 
 ###########################   Partie 5 :  Affichage   ###########################
 
-find_biggest_square()
+display_biggest_square()
